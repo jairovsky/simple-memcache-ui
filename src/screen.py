@@ -1,6 +1,12 @@
 import urwid
+import sys
+import logging
+from logging import debug
 
-def exit_on_q(key):
+logging.basicConfig(filename='log.txt',level=logging.DEBUG,format='%(asctime)s %(message)s')
+
+
+def handle_global_key(key):
     if key in ('q', 'Q'):
         raise urwid.ExitMainLoop()
 
@@ -39,7 +45,7 @@ class MainWindow(urwid.WidgetWrap):
             [
                 ('weight',4, KeyList()),
                 ('fixed', 1, urwid.AttrWrap( urwid.SolidFill(u'\u2502'), 'line')),
-                ('weight',6, ContentDisplay())
+                ('weight',6, ContentPanel())
             ],
             dividechars=1,
             focus_column=0)
@@ -52,11 +58,28 @@ class MainWindow(urwid.WidgetWrap):
 class KeyList(urwid.WidgetWrap):
 
     def __init__(self):
-        txt = urwid.Text(('banner', u" Hello World "), align='center')
-        fill = urwid.Filler(txt, valign='top')
-        super().__init__(fill)
+        lb = urwid.ListBox(urwid.SimpleFocusListWalker([
+            urwid.Text(('banner', u" Hello World "), align='center'),
+            urwid.AttrWrap(KeyListItem('huehue', 'bct1'), 'text', 'line'),
+            urwid.AttrWrap(KeyListItem('huehue', 'bct2'), 'text', 'line'),
+            urwid.AttrWrap(KeyListItem('huehue', 'bct3'), 'text', 'line'),
+            urwid.AttrWrap(KeyListItem('huehue', 'bct4'), 'text', 'line'),
+            urwid.AttrWrap(KeyListItem('huehue', 'bct5'), 'text', 'line'),
+            urwid.AttrWrap(KeyListItem('huehue', 'bct6'), 'text', 'line')
+        ]))
+        super().__init__(lb)
 
-class ContentDisplay(urwid.WidgetWrap):
+class KeyListItem(urwid.Button):
+
+    def __init__(self, label, data):
+        super().__init__(label, user_data=data)
+        urwid.connect_signal(self, 'click', key_clicked, data)
+        
+
+
+
+
+class ContentPanel(urwid.WidgetWrap):
 
     def __init__(self):
         blank = urwid.Divider()
@@ -69,6 +92,12 @@ class ContentDisplay(urwid.WidgetWrap):
     
         super().__init__(listbox)
 
+def key_clicked(btn, btn_data):
+    debug(btn)
+    debug(btn_data)
 
-loop = urwid.MainLoop(MainWindow(), palette, unhandled_input=exit_on_q)
+MAIN_WINDOW = MainWindow()
+
+
+loop = urwid.MainLoop(MAIN_WINDOW, palette, unhandled_input=handle_global_key)
 loop.run()
