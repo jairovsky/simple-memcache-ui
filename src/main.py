@@ -1,21 +1,17 @@
 import mem
-import screen
+from ui import MainUI
 import logging
+from sys import argv
 
-client = mem.connect()
+logging.basicConfig(filename='log.txt',level=logging.DEBUG,format='%(asctime)s %(message)s')
 
-def getkeys():
-    k = client.get_all_keys()
-    i = 0
-    r = []
-    for kk in k:
-        r.append((kk, i))
-        i += 1
-    return r
-def getkey(k, data):
-    
-    return client.get(k.label)
+client = mem.connect(argv[1], int(argv[2]))
 
-screen.start(on_update=getkeys, on_get_key=getkey)
+if __name__ == '__main__':
+    ui = MainUI()
+    ui.refresh_items = lambda: client.get_all_keys()
+    ui.get_item = lambda k: client.get(k)
+
+    ui.start()
 
 
