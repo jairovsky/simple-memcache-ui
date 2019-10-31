@@ -13,3 +13,4 @@ pip3 install -r requirements.txt
 
 - <kbd>r</kbd>: refresh key list
 - <kbd>enter</kbd>: show key contents on the right panel
+- <kbd>d</kbd>: delete key

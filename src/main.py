@@ -11,6 +11,7 @@ if __name__ == '__main__':
     ui = MainUI()
     ui.refresh_items = lambda: client.get_all_keys()
     ui.get_item = lambda k: client.get(k)
+    ui.del_item = lambda k: client.delete(k)
 
     ui.start()
 

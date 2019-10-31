@@ -37,6 +37,9 @@ class MainUI(urwid.WidgetWrap):
         if e['name'] == 'item-clicked':
             notify({'name':'item-loaded', 'data':self.get_item(e['key'])})
 
+        if e['name'] == 'item-delete':
+            notify({'name':'item-deleted', 'data':self.del_item(e['key'])})
+
     def start(self):
         loop = urwid.MainLoop(self, palette, unhandled_input=handle_global_key)
         
@@ -60,9 +63,14 @@ class KeyListWidget(urwid.WidgetWrap):
             self._contents = e['data']
             self._update_list_box()
 
+        elif e['name'] == 'delete':
+            notify({'name': 'item-delete', 'key': self._w.focus.label})
+            self._lw.remove(self._w.focus)
+
+
     def _update_list_box(self):
-        lw = self._create_list_walker(self._contents)
-        self._w = urwid.ListBox(lw)
+        self._lw = self._create_list_walker(self._contents)
+        self._w = urwid.ListBox(self._lw)
 
     def _create_list_walker(self, items):
 
@@ -84,8 +92,8 @@ class KeyListItem(urwid.AttrWrap):
         urwid.connect_signal(btn, 'click', self.on_click)
         super().__init__(btn, 'text', 'line')
 
-    def on_click(widget, data):
-        notify({'name': 'item-clicked', 'key': widget.label})
+    def on_click(self, data):
+        notify({'name': 'item-clicked', 'key': self.label})
 
 
 class ContentDisplayPanel(urwid.WidgetWrap):
@@ -115,4 +123,7 @@ def handle_global_key(key):
     
     elif key == 'r':
         notify({'name': 'refresh'})
+
+    elif key == 'd':
+        notify({'name': 'delete'})
 
