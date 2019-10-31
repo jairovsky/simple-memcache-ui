@@ -1,3 +1,4 @@
 pymemcache
 urwid
 zope.event
+clipboard

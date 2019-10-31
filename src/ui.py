@@ -3,6 +3,7 @@ import sys
 import logging
 from zope.event import notify
 from zope.event import subscribers
+import clipboard
 
 palette = [('bg', 'white', 'black'),
            ('banner', 'black', 'light gray'),
@@ -114,7 +115,10 @@ class ContentDisplayPanel(urwid.WidgetWrap):
     def _onevent(self, e):
         
         if e['name'] == 'item-loaded':
-            self.txt.set_text(e['data'])
+            self.txt.set_text(e['data'].decode("utf-8"))
+
+        if e['name'] == 'copy':
+            clipboard.copy(self.txt.text)
 
 
 def handle_global_key(key):
@@ -126,4 +130,7 @@ def handle_global_key(key):
 
     elif key == 'd':
         notify({'name': 'delete'})
+
+    elif key == 'y':
+        notify({'name': 'copy'})
 
